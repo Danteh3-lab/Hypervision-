@@ -8,7 +8,7 @@ The project now uses the `hypervision.*` namespace as its canonical API and runt
 - Brand: Hypervision
 - Visual direction: crimson primary with slate-gray secondary accents
 - Canonical package root: `hypervision.*`
-- Supported packaging targets in this branch: common, Fabric, Forge, and Tweaker
+- Supported packaging targets in this branch: common and Fabric
 
 ## Quick Start
 - Open chat and use the default prefix `#`
@@ -22,7 +22,7 @@ The project now uses the `hypervision.*` namespace as its canonical API and runt
 - Chunk caching for far travel and revisit-heavy routes
 - Mining, building, following, farming, and waypoint workflows
 - Selection rendering, path overlays, and toast/chat feedback in the Hypervision palette
-- Fabric and Forge module support in the same repo, plus the legacy Tweaker path
+- Fabric-focused packaging with shared common code
 
 ## Docs
 - [Features](FEATURES.md)

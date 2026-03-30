@@ -1,7 +1,7 @@
 # Hypervision Setup
 
 ## Install
-The easiest way to use Hypervision is as a mod build for Fabric or Forge. This repository also still contains the legacy Tweaker packaging path used by older integration workflows.
+The easiest way to use Hypervision is as a Fabric mod build. This branch is intentionally trimmed to the Fabric/common code path only.
 
 Until official Hypervision release pages exist, use local builds from this repository.
 
@@ -15,7 +15,7 @@ Why: this branch currently hits a Gradle 8.2 `buildSrc.jar` instrumentation issu
 - Windows: `gradlew build`
 - macOS/Linux: `./gradlew build`
 
-The default project setup includes the enabled platform modules in this repository. If you need to control platforms explicitly, use the `Hypervision.enabled_platforms` system property. The legacy `Baritone.enabled_platforms` property is still accepted as a fallback during transition.
+The default project setup in this branch builds the shared common code and the Fabric module.
 
 ### IntelliJ
 - Open the repository as a Gradle project.

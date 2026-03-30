@@ -23,10 +23,6 @@ pluginManagement {
             url = 'https://maven.wagyourtail.xyz/snapshots'
         }
         maven {
-            name = 'ForgeMaven'
-            url = 'https://maven.minecraftforge.net/'
-        }
-        maven {
             name = 'FabricMaven'
             url = 'https://maven.fabricmc.net/'
         }
@@ -40,16 +36,4 @@ pluginManagement {
 }
 
 rootProject.name = 'hypervision'
-
-include("tweaker")
-def enabledPlatforms = System.getProperty("Hypervision.enabled_platforms")
-if (enabledPlatforms == null) {
-    enabledPlatforms = System.getProperty("Baritone.enabled_platforms")
-}
-if (enabledPlatforms == null) {
-    enabledPlatforms = "fabric,forge"
-    System.setProperty("Hypervision.enabled_platforms", enabledPlatforms)
-}
-for (platform in enabledPlatforms.split(",")) {
-       include(platform)
-}
+include("fabric")
