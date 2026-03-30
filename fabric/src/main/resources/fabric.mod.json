@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "hypervision",
+  "version": "${version}",
+
+  "name": "Hypervision",
+  "description": "Redline pathfinding for block worlds.",
+  "authors": [
+    "leijurv", "Brady"
+  ],
+  "contact": {
+    "homepage": "https://example.com/hypervision",
+    "sources": "https://example.com/hypervision/repository",
+    "issues": "https://example.com/hypervision/issues"
+  },
+
+  "license": "LGPL-3.0",
+
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+      "mixins.baritone.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": ["1.21.6", "1.21.7", "1.21.8"]
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://example.com/hypervision/community"
+      }
+    }
+  }
+}

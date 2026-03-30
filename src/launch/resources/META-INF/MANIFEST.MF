@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+MixinConfigs: mixins.hypervision.json
+MixinConnector: hypervision.launch.HypervisionMixinConnector
+Implementation-Title: Hypervision
+Implementation-Version: version
