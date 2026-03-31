@@ -22,6 +22,8 @@
     "MixinLootTable",
     "MixinMinecraft",
     "MixinNetworkManager",
+    "MixinOneConfigBrandPalette",
+    "MixinOneConfigModsPagePalette",
     "MixinPalettedContainer",
     "MixinPalettedContainer$Data",
     "MixinPlayerController",
