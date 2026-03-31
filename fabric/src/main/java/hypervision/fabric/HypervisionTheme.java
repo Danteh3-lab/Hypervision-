@@ -7,6 +7,7 @@ import org.polyfrost.polyui.color.DarkTheme;
 public final class HypervisionTheme extends DarkTheme {
 
     public static final HypervisionTheme INSTANCE = new HypervisionTheme();
+    private static final DarkTheme DEFAULT_THEME = new DarkTheme();
 
     private static final Colors.Palette BRAND_FG = new Colors.Palette(
             ColorUtils.rgba(193, 36, 62),
@@ -85,6 +86,19 @@ public final class HypervisionTheme extends DarkTheme {
             )
     );
 
+    private static final Colors.Palette SUCCESS = new Colors.Palette(
+            ColorUtils.rgba(34, 197, 94),
+            ColorUtils.rgba(22, 163, 74),
+            ColorUtils.rgba(21, 128, 61),
+            ColorUtils.rgba(34, 197, 94, 0.45F)
+    );
+
+    private static final Colors.State STATE = new Colors.State(
+            DEFAULT_THEME.getState().getDanger(),
+            DEFAULT_THEME.getState().getWarning(),
+            SUCCESS
+    );
+
     private HypervisionTheme() {
     }
 
@@ -116,5 +130,10 @@ public final class HypervisionTheme extends DarkTheme {
     @Override
     public Colors.Text getText() {
         return TEXT;
+    }
+
+    @Override
+    public Colors.State getState() {
+        return STATE;
     }
 }

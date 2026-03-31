@@ -24,6 +24,7 @@
     "MixinNetworkManager",
     "MixinOneConfigBrandPalette",
     "MixinOneConfigModsPagePalette",
+    "MixinPolyUiTogglePalette",
     "MixinPalettedContainer",
     "MixinPalettedContainer$Data",
     "MixinPlayerController",
