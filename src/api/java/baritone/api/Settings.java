@@ -398,7 +398,7 @@ public final class Settings {
     /**
      * How many degrees to randomize the yaw every tick. Set to 0 to disable
      */
-    public final Setting<Double> randomLooking113 = new Setting<>(2d);
+    public final Setting<Double> randomLooking113 = new Setting<>(0d);
 
     /**
      * Block reach distance
@@ -414,7 +414,7 @@ public final class Settings {
     /**
      * How many degrees to randomize the pitch and yaw every tick. Set to 0 to disable
      */
-    public final Setting<Double> randomLooking = new Setting<>(0.01d);
+    public final Setting<Double> randomLooking = new Setting<>(0d);
 
     /**
      * This is the big A* setting.
@@ -780,7 +780,7 @@ public final class Settings {
     /**
      * Interpolates automated yaw and pitch changes across a short path instead of snapping directly to the target rotation.
      */
-    public final Setting<Boolean> interpolatedLook = new Setting<>(true);
+    public final Setting<Boolean> interpolatedLook = new Setting<>(false);
 
     /**
      * Same as {@link #smoothLook} but for elytra flying.
@@ -790,7 +790,7 @@ public final class Settings {
     /**
      * Controls how many ticks an {@link #interpolatedLook} turn should take to reach its destination.
      */
-    public final Setting<Integer> interpolatedLookLength = new Setting<>(10);
+    public final Setting<Integer> interpolatedLookLength = new Setting<>(1);
 
     /**
      * The number of ticks to average across for {@link #smoothLook};
