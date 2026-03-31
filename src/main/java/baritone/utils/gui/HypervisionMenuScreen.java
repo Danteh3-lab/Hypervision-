@@ -215,12 +215,13 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
                 });
             }
             case MINE -> {
-                int countWidth = Math.min(88, Math.max(68, contentWidth / 4));
-                mineTargetField = addField(new Rect(contentX, fieldY + 16, contentWidth - countWidth - gap, ACTION_FIELD_HEIGHT), mineTarget, value -> {
+                int fieldTop = fieldY + 20;
+                int countWidth = Math.min(112, Math.max(96, contentWidth / 5));
+                mineTargetField = addField(new Rect(contentX, fieldTop, contentWidth - countWidth - gap, ACTION_FIELD_HEIGHT), mineTarget, value -> {
                     mineTarget = value;
                     SESSION.mineTarget = value;
                 });
-                mineCountField = addField(new Rect(contentX + contentWidth - countWidth, fieldY + 16, countWidth, ACTION_FIELD_HEIGHT), mineCount, value -> {
+                mineCountField = addField(new Rect(contentX + contentWidth - countWidth, fieldTop, countWidth, ACTION_FIELD_HEIGHT), mineCount, value -> {
                     mineCount = value;
                     SESSION.mineCount = value;
                 });
@@ -522,20 +523,21 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
         int contentWidth = content.width();
         int gap = 8;
         int fieldY = content.y();
-        int countWidth = Math.min(88, Math.max(68, contentWidth / 4));
-        Rect targetRect = new Rect(contentX, fieldY + 16, contentWidth - countWidth - gap, ACTION_FIELD_HEIGHT);
-        Rect countRect = new Rect(contentX + contentWidth - countWidth, fieldY + 16, countWidth, ACTION_FIELD_HEIGHT);
+        int fieldTop = fieldY + 20;
+        int countWidth = Math.min(112, Math.max(96, contentWidth / 5));
+        Rect targetRect = new Rect(contentX, fieldTop, contentWidth - countWidth - gap, ACTION_FIELD_HEIGHT);
+        Rect countRect = new Rect(contentX + contentWidth - countWidth, fieldTop, countWidth, ACTION_FIELD_HEIGHT);
         int buttonWidth = (contentWidth - gap) / 2;
-        Rect pickRect = new Rect(contentX, fieldY + 46, buttonWidth, ACTION_BUTTON_HEIGHT);
-        Rect mineRect = new Rect(contentX + buttonWidth + gap, fieldY + 46, buttonWidth, ACTION_BUTTON_HEIGHT);
+        Rect pickRect = new Rect(contentX, fieldY + 50, buttonWidth, ACTION_BUTTON_HEIGHT);
+        Rect mineRect = new Rect(contentX + buttonWidth + gap, fieldY + 50, buttonWidth, ACTION_BUTTON_HEIGHT);
 
         guiGraphics.drawString(font, "Block", contentX, fieldY, COLOR_TEXT_MUTED);
+        guiGraphics.drawString(font, "Quantity", countRect.x(), fieldY, COLOR_TEXT_MUTED);
         drawFieldBackplate(guiGraphics, targetRect);
-        guiGraphics.drawString(font, "Quantity", countRect.x(), countRect.y() - 12, COLOR_TEXT_SOFT);
         drawFieldBackplate(guiGraphics, countRect);
         drawButton(guiGraphics, pickRect, "Use look target", isInside(mouseX, mouseY, pickRect), false);
         drawButton(guiGraphics, mineRect, "Mine now", isInside(mouseX, mouseY, mineRect), false);
-        guiGraphics.drawString(font, trimToWidth(actionPreview(), contentWidth), contentX, mineRect.bottom() + 12, COLOR_SUCCESS);
+        guiGraphics.drawString(font, trimToWidth(actionPreview(), contentWidth), contentX, mineRect.bottom() + 10, COLOR_SUCCESS);
     }
 
     private void renderFollowPane(GuiGraphics guiGraphics, Rect form, int mouseX, int mouseY) {
@@ -837,8 +839,8 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
             case MINE -> {
                 int fieldY = content.y();
                 int buttonWidth = (contentWidth - gap) / 2;
-                Rect pickRect = new Rect(contentX, fieldY + 46, buttonWidth, ACTION_BUTTON_HEIGHT);
-                Rect mineRect = new Rect(contentX + buttonWidth + gap, fieldY + 46, buttonWidth, ACTION_BUTTON_HEIGHT);
+                Rect pickRect = new Rect(contentX, fieldY + 50, buttonWidth, ACTION_BUTTON_HEIGHT);
+                Rect mineRect = new Rect(contentX + buttonWidth + gap, fieldY + 50, buttonWidth, ACTION_BUTTON_HEIGHT);
                 if (isInside(mouseX, mouseY, pickRect)) {
                     BlockPos pos = getLookTarget();
                     if (pos == null || baritone.getPlayerContext().world() == null) {
