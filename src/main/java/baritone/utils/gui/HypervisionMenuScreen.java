@@ -199,16 +199,17 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
         int gap = 8;
         switch (actionPane) {
             case GOTO -> {
+                int fieldTop = fieldY + 20;
                 int colWidth = Math.max(60, (contentWidth - gap * 2) / 3);
-                gotoXField = addField(new Rect(contentX, fieldY + 16, colWidth, ACTION_FIELD_HEIGHT), gotoX, value -> {
+                gotoXField = addField(new Rect(contentX, fieldTop, colWidth, ACTION_FIELD_HEIGHT), gotoX, value -> {
                     gotoX = value;
                     SESSION.gotoX = value;
                 });
-                gotoYField = addField(new Rect(contentX + colWidth + gap, fieldY + 16, colWidth, ACTION_FIELD_HEIGHT), gotoY, value -> {
+                gotoYField = addField(new Rect(contentX + colWidth + gap, fieldTop, colWidth, ACTION_FIELD_HEIGHT), gotoY, value -> {
                     gotoY = value;
                     SESSION.gotoY = value;
                 });
-                gotoZField = addField(new Rect(contentX + (colWidth + gap) * 2, fieldY + 16, colWidth, ACTION_FIELD_HEIGHT), gotoZ, value -> {
+                gotoZField = addField(new Rect(contentX + (colWidth + gap) * 2, fieldTop, colWidth, ACTION_FIELD_HEIGHT), gotoZ, value -> {
                     gotoZ = value;
                     SESSION.gotoZ = value;
                 });
@@ -492,22 +493,24 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
         int contentWidth = content.width();
         int fieldY = content.y();
         int gap = 8;
+        int axisLabelY = fieldY + 12;
+        int fieldTop = fieldY + 20;
         int colWidth = Math.max(60, (contentWidth - gap * 2) / 3);
-        Rect xRect = new Rect(contentX, fieldY + 16, colWidth, ACTION_FIELD_HEIGHT);
-        Rect yRect = new Rect(contentX + colWidth + gap, fieldY + 16, colWidth, ACTION_FIELD_HEIGHT);
-        Rect zRect = new Rect(contentX + (colWidth + gap) * 2, fieldY + 16, colWidth, ACTION_FIELD_HEIGHT);
+        Rect xRect = new Rect(contentX, fieldTop, colWidth, ACTION_FIELD_HEIGHT);
+        Rect yRect = new Rect(contentX + colWidth + gap, fieldTop, colWidth, ACTION_FIELD_HEIGHT);
+        Rect zRect = new Rect(contentX + (colWidth + gap) * 2, fieldTop, colWidth, ACTION_FIELD_HEIGHT);
         int buttonWidth = (contentWidth - gap) / 2;
-        Rect currentRect = new Rect(contentX, fieldY + 46, buttonWidth, ACTION_BUTTON_HEIGHT);
-        Rect lookRect = new Rect(contentX + buttonWidth + gap, fieldY + 46, buttonWidth, ACTION_BUTTON_HEIGHT);
-        Rect runRect = new Rect(contentX, fieldY + 72, contentWidth, ACTION_BUTTON_HEIGHT);
+        Rect currentRect = new Rect(contentX, fieldY + 50, buttonWidth, ACTION_BUTTON_HEIGHT);
+        Rect lookRect = new Rect(contentX + buttonWidth + gap, fieldY + 50, buttonWidth, ACTION_BUTTON_HEIGHT);
+        Rect runRect = new Rect(contentX, fieldY + 78, contentWidth, ACTION_BUTTON_HEIGHT);
 
         guiGraphics.drawString(font, "Coordinates", contentX, fieldY, COLOR_TEXT_MUTED);
         drawFieldBackplate(guiGraphics, xRect);
         drawFieldBackplate(guiGraphics, yRect);
         drawFieldBackplate(guiGraphics, zRect);
-        guiGraphics.drawString(font, "X", xRect.x(), xRect.y() - 12, COLOR_TEXT_SOFT);
-        guiGraphics.drawString(font, "Y", yRect.x(), yRect.y() - 12, COLOR_TEXT_SOFT);
-        guiGraphics.drawString(font, "Z", zRect.x(), zRect.y() - 12, COLOR_TEXT_SOFT);
+        guiGraphics.drawString(font, "X", xRect.x(), axisLabelY, COLOR_TEXT_SOFT);
+        guiGraphics.drawString(font, "Y", yRect.x(), axisLabelY, COLOR_TEXT_SOFT);
+        guiGraphics.drawString(font, "Z", zRect.x(), axisLabelY, COLOR_TEXT_SOFT);
         drawButton(guiGraphics, currentRect, "Use position", isInside(mouseX, mouseY, currentRect), false);
         drawButton(guiGraphics, lookRect, "Use look target", isInside(mouseX, mouseY, lookRect), false);
         drawButton(guiGraphics, runRect, "Run goto", isInside(mouseX, mouseY, runRect), false);
@@ -797,9 +800,9 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
             case GOTO -> {
                 int fieldY = content.y();
                 int buttonWidth = (contentWidth - gap) / 2;
-                Rect currentRect = new Rect(contentX, fieldY + 46, buttonWidth, ACTION_BUTTON_HEIGHT);
-                Rect lookRect = new Rect(contentX + buttonWidth + gap, fieldY + 46, buttonWidth, ACTION_BUTTON_HEIGHT);
-                Rect runRect = new Rect(contentX, fieldY + 72, contentWidth, ACTION_BUTTON_HEIGHT);
+                Rect currentRect = new Rect(contentX, fieldY + 50, buttonWidth, ACTION_BUTTON_HEIGHT);
+                Rect lookRect = new Rect(contentX + buttonWidth + gap, fieldY + 50, buttonWidth, ACTION_BUTTON_HEIGHT);
+                Rect runRect = new Rect(contentX, fieldY + 78, contentWidth, ACTION_BUTTON_HEIGHT);
                 if (isInside(mouseX, mouseY, currentRect)) {
                     BlockPos pos = baritone.getPlayerContext().playerFeet();
                     gotoX = Integer.toString(pos.getX());
