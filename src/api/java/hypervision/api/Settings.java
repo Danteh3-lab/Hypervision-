@@ -775,6 +775,11 @@ public final class Settings {
     public final Setting<Boolean> elytraFreeLook = new Setting<>(true);
 
     /**
+     * Keep the client camera aligned with automation-driven yaw and pitch instead of restoring the pre-automation view.
+     */
+    public final Setting<Boolean> syncClientLook = new Setting<>(true);
+
+    /**
      * Forces the client-sided yaw rotation to an average of the last {@link #smoothLookTicks} of server-sided rotations.
      */
     public final Setting<Boolean> smoothLook = new Setting<>(false);

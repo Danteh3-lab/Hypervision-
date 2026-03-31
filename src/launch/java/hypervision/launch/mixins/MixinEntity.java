@@ -61,8 +61,10 @@ public class MixinEntity {
     )
     private void moveRelativeReturn(CallbackInfo info) {
         if (this.motionUpdateRotationEvent != null) {
-            this.yRot = this.motionUpdateRotationEvent.getOriginal().getYaw();
-            this.xRot = this.motionUpdateRotationEvent.getOriginal().getPitch();
+            if (!HypervisionAPI.getSettings().syncClientLook.value) {
+                this.yRot = this.motionUpdateRotationEvent.getOriginal().getYaw();
+                this.xRot = this.motionUpdateRotationEvent.getOriginal().getPitch();
+            }
             this.motionUpdateRotationEvent = null;
         }
     }

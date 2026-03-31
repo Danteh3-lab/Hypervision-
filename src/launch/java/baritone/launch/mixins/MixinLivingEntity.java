@@ -107,8 +107,10 @@ public abstract class MixinLivingEntity extends Entity {
     )
     private void onPostElytraMove(final CallbackInfo ci) {
         if (this.elytraRotationEvent != null) {
-            this.setYRot(this.elytraRotationEvent.getOriginal().getYaw());
-            this.setXRot(this.elytraRotationEvent.getOriginal().getPitch());
+            if (!BaritoneAPI.getSettings().syncClientLook.value) {
+                this.setYRot(this.elytraRotationEvent.getOriginal().getYaw());
+                this.setXRot(this.elytraRotationEvent.getOriginal().getPitch());
+            }
             this.elytraRotationEvent = null;
         }
     }
