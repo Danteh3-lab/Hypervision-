@@ -2,6 +2,7 @@ package hypervision.fabric;
 
 import baritone.api.BaritoneAPI;
 import baritone.api.Settings;
+import baritone.api.pathing.goals.GoalBlock;
 import baritone.api.utils.SettingsUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -9,6 +10,8 @@ import org.polyfrost.oneconfig.api.config.v1.Config;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Button;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Number;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Switch;
+
+import java.util.Locale;
 
 public final class HypervisionOneConfig extends Config {
 
@@ -64,6 +67,15 @@ public final class HypervisionOneConfig extends Config {
 
     @Switch(title = "Chat Debug", description = "Print extra debug information to chat.", category = "Debug", subcategory = "Chat")
     public static boolean chatDebug = false;
+
+    @Number(title = "Goal X", description = "Target X coordinate for quick pathfinding tests.", min = -30000000, max = 30000000, category = "Pathfinding", subcategory = "Go To")
+    public static int goalX = 0;
+
+    @Number(title = "Goal Y", description = "Target Y coordinate for quick pathfinding tests.", min = -64, max = 320, category = "Pathfinding", subcategory = "Go To")
+    public static int goalY = 64;
+
+    @Number(title = "Goal Z", description = "Target Z coordinate for quick pathfinding tests.", min = -30000000, max = 30000000, category = "Pathfinding", subcategory = "Go To")
+    public static int goalZ = 0;
 
     private boolean syncing;
 
@@ -148,12 +160,36 @@ public final class HypervisionOneConfig extends Config {
         runCommand("help");
     }
 
+    @Button(title = "Use Current Position", description = "Copy your current block position into the quick goto fields.", text = "Use current position", category = "Pathfinding", subcategory = "Go To")
+    private void useCurrentPosition() {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null) {
+            showMessage("No player loaded for position capture");
+            return;
+        }
+        goalX = client.player.blockPosition().getX();
+        goalY = client.player.blockPosition().getY();
+        goalZ = client.player.blockPosition().getZ();
+        if (tree != null) {
+            getProperty("goalX").setAsReferential(goalX);
+            getProperty("goalY").setAsReferential(goalY);
+            getProperty("goalZ").setAsReferential(goalZ);
+        }
+    }
+
+    @Button(title = "Go To Coordinates", description = "Set a goal and start pathfinding toward the configured coordinates.", text = "Go to", category = "Pathfinding", subcategory = "Go To")
+    private void goToCoordinates() {
+        BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalBlock(goalX, goalY, goalZ));
+        showMessage("Going to " + goalX + ", " + goalY + ", " + goalZ);
+        Minecraft.getInstance().setScreen(null);
+    }
+
     private void applySetting(String settingName, Object value) {
         if (syncing) {
             return;
         }
         try {
-            SettingsUtil.parseAndApply(BaritoneAPI.getSettings(), settingName, String.valueOf(value));
+            SettingsUtil.parseAndApply(BaritoneAPI.getSettings(), settingName.toLowerCase(Locale.ROOT), String.valueOf(value));
             SettingsUtil.save(BaritoneAPI.getSettings());
         } catch (Exception ex) {
             showMessage("Failed to update " + settingName + ": " + ex.getMessage());
