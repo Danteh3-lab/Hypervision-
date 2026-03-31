@@ -50,6 +50,7 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
      * @see Settings#freeLook
      */
     private Rotation prevRotation;
+    private Rotation lastAppliedRotation;
 
     private final AimProcessor processor;
 
@@ -99,6 +100,7 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
 
                 this.prevRotation = new Rotation(ctx.player().getYRot(), ctx.player().getXRot());
                 final Rotation actual = this.processor.peekRotation(this.target.rotation);
+                this.lastAppliedRotation = actual;
                 ctx.player().setYRot(actual.getYaw());
                 ctx.player().setXRot(actual.getPitch());
                 break;
@@ -107,11 +109,12 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
                 // Reset the player's rotations back to their original values
                 if (this.prevRotation != null) {
                     if (!this.shouldSyncClientLook()) {
-                        this.smoothYawBuffer.addLast(this.target.rotation.getYaw());
+                        final Rotation smoothedRotation = this.lastAppliedRotation != null ? this.lastAppliedRotation : this.target.rotation;
+                        this.smoothYawBuffer.addLast(smoothedRotation.getYaw());
                         while (this.smoothYawBuffer.size() > hypervision.settings().smoothLookTicks.value) {
                             this.smoothYawBuffer.removeFirst();
                         }
-                        this.smoothPitchBuffer.addLast(this.target.rotation.getPitch());
+                        this.smoothPitchBuffer.addLast(smoothedRotation.getPitch());
                         while (this.smoothPitchBuffer.size() > hypervision.settings().smoothLookTicks.value) {
                             this.smoothPitchBuffer.removeFirst();
                         }
@@ -128,6 +131,7 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
                     //ctx.player().xRotO = prevRotation.getPitch();
                     //ctx.player().yRotO = prevRotation.getYaw();
                     this.prevRotation = null;
+                    this.lastAppliedRotation = null;
                 }
                 // The target is done being used for this game tick, so it can be invalidated
                 this.target = null;
@@ -154,6 +158,9 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
     public void onWorldEvent(WorldEvent event) {
         this.serverRotation = null;
         this.target = null;
+        this.prevRotation = null;
+        this.lastAppliedRotation = null;
+        this.processor.reset();
     }
 
     public void pig() {
@@ -223,6 +230,9 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
         private double biasTargetPitchOffset;
         private int biasRetargetTicks;
         private boolean forceImmediate;
+        private Rotation interpolationSource;
+        private Rotation interpolationTarget;
+        private int interpolationTicks;
 
         public AbstractAimProcessor(IPlayerContext ctx) {
             this.ctx = ctx;
@@ -242,11 +252,15 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
             this.biasTargetPitchOffset = source.biasTargetPitchOffset;
             this.biasRetargetTicks = source.biasRetargetTicks;
             this.forceImmediate = source.forceImmediate;
+            this.interpolationSource = source.interpolationSource;
+            this.interpolationTarget = source.interpolationTarget;
+            this.interpolationTicks = source.interpolationTicks;
         }
 
         @Override
         public final Rotation peekRotation(final Rotation rotation) {
             final Rotation prev = this.getPrevRotation();
+            final boolean interpolatedLook = hypervision.settings().interpolatedLook.value;
 
             float desiredYaw = rotation.getYaw();
             float desiredPitch = rotation.getPitch();
@@ -257,9 +271,18 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
                 desiredPitch = nudgeToLevel(desiredPitch);
             }
 
-            if (!this.forceImmediate) {
+            if (!this.forceImmediate && !interpolatedLook) {
                 desiredYaw += this.randomYawOffset;
                 desiredPitch += this.randomPitchOffset;
+            }
+
+            if (interpolatedLook) {
+                final Rotation desired = new Rotation(desiredYaw, desiredPitch).clamp();
+                this.prepareInterpolation(prev, desired);
+                final float progress = this.interpolationProgress();
+                desiredYaw = this.lerpYaw(this.interpolationSource.getYaw(), this.interpolationTarget.getYaw(), progress);
+                desiredPitch = this.lerp(this.interpolationSource.getPitch(), this.interpolationTarget.getPitch(), progress);
+            } else if (!this.forceImmediate) {
                 desiredYaw = prev.getYaw() + this.stepTowardsYaw(prev.getYaw(), desiredYaw);
                 desiredPitch = prev.getPitch() + this.stepTowardsPitch(prev.getPitch(), desiredPitch);
             }
@@ -273,8 +296,24 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
         @Override
         public final void tick() {
             final Settings settings = hypervision.settings();
+            if (settings.interpolatedLook.value) {
+                this.randomYawOffset = 0.0D;
+                this.randomPitchOffset = 0.0D;
+                this.driftYawOffset = 0.0D;
+                this.driftPitchOffset = 0.0D;
+                this.driftYawVelocity = 0.0D;
+                this.driftPitchVelocity = 0.0D;
+                this.biasTargetYawOffset = 0.0D;
+                this.biasTargetPitchOffset = 0.0D;
+                this.biasRetargetTicks = 0;
+                if (this.interpolationTarget != null) {
+                    this.interpolationTicks = Math.min(this.interpolationTicks + 1, this.interpolationLength());
+                }
+                return;
+            }
             final double fineAmplitude = settings.randomLooking.value;
             final double coarseAmplitude = settings.randomLooking113.value;
+            this.resetInterpolation();
             final double maxYawBias = 1.6 + coarseAmplitude * 0.85;
             final double maxPitchBias = 0.65 + fineAmplitude * 22.0;
 
@@ -344,6 +383,10 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
             this.forceImmediate = forceImmediate;
         }
 
+        public final void reset() {
+            this.resetInterpolation();
+        }
+
         protected abstract Rotation getPrevRotation();
 
         /**
@@ -362,6 +405,44 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
             final float delta = target - current;
             final double deltaPx = angleToMouse(delta); // yes, even the mouse movements use double
             return current + mouseToAngle(deltaPx);
+        }
+
+        private void prepareInterpolation(Rotation current, Rotation desired) {
+            if (this.shouldRestartInterpolation(desired)) {
+                this.interpolationSource = new Rotation(current.getYaw(), current.getPitch());
+                this.interpolationTarget = desired;
+                this.interpolationTicks = 0;
+                return;
+            }
+
+            this.interpolationTarget = desired;
+        }
+
+        private boolean shouldRestartInterpolation(Rotation desired) {
+            if (this.interpolationSource == null || this.interpolationTarget == null) {
+                return true;
+            }
+
+            if (this.interpolationTicks >= this.interpolationLength()) {
+                return true;
+            }
+
+            return Math.abs(Rotation.normalizeYaw(desired.getYaw() - this.interpolationTarget.getYaw())) > 12.0F
+                    || Math.abs(desired.getPitch() - this.interpolationTarget.getPitch()) > 8.0F;
+        }
+
+        private void resetInterpolation() {
+            this.interpolationSource = null;
+            this.interpolationTarget = null;
+            this.interpolationTicks = 0;
+        }
+
+        private int interpolationLength() {
+            return Math.max(1, hypervision.settings().interpolatedLookLength.value);
+        }
+
+        private float interpolationProgress() {
+            return Math.min(1.0F, (this.interpolationTicks + 1.0F) / this.interpolationLength());
         }
 
         private float stepTowardsYaw(float current, float target) {
@@ -401,6 +482,14 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
                 random *= 4;
             }
             return random;
+        }
+
+        private float lerpYaw(float start, float end, float amount) {
+            return start + Rotation.normalizeYaw(end - start) * amount;
+        }
+
+        private float lerp(float start, float end, float amount) {
+            return start + (end - start) * amount;
         }
 
         private double chooseBiasOffset(double maxMagnitude, double minMagnitude) {

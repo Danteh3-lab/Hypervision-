@@ -36,7 +36,7 @@ public class MenuCommand extends Command {
     public void execute(String label, IArgConsumer args) throws CommandException {
         args.requireMax(0);
         baritone.openCommandMenu();
-        logDirect("Opened Hypervision control center");
+        logDirect("Opened Hypervision settings");
     }
 
     @Override
@@ -46,13 +46,13 @@ public class MenuCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Open the Hypervision control center";
+        return "Open the Hypervision settings screen";
     }
 
     @Override
     public List<String> getLongDesc() {
         return Arrays.asList(
-                "Opens the custom Hypervision control center overlay.",
+                "Opens the Hypervision settings screen.",
                 "",
                 "Usage:",
                 "> menu"

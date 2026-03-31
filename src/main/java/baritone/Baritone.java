@@ -35,6 +35,7 @@ import baritone.utils.BlockStateInterface;
 import baritone.utils.GuiClick;
 import baritone.utils.InputOverrideHandler;
 import baritone.utils.PathingControlManager;
+import baritone.utils.gui.CommandMenuDispatcher;
 import baritone.utils.gui.HypervisionMenuScreen;
 import baritone.utils.player.BaritonePlayerContext;
 import net.minecraft.client.Minecraft;
@@ -253,6 +254,9 @@ public class Baritone implements IBaritone {
 
     @Override
     public void openCommandMenu() {
+        if (CommandMenuDispatcher.open(this)) {
+            return;
+        }
         mc.execute(() -> mc.setScreen(new HypervisionMenuScreen(this)));
     }
 

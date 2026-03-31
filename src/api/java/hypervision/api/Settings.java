@@ -785,9 +785,19 @@ public final class Settings {
     public final Setting<Boolean> smoothLook = new Setting<>(false);
 
     /**
+     * Interpolates automated yaw and pitch changes across a short path instead of snapping directly to the target rotation.
+     */
+    public final Setting<Boolean> interpolatedLook = new Setting<>(true);
+
+    /**
      * Same as {@link #smoothLook} but for elytra flying.
      */
     public final Setting<Boolean> elytraSmoothLook = new Setting<>(false);
+
+    /**
+     * Controls how many ticks an {@link #interpolatedLook} turn should take to reach its destination.
+     */
+    public final Setting<Integer> interpolatedLookLength = new Setting<>(10);
 
     /**
      * The number of ticks to average across for {@link #smoothLook};

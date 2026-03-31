@@ -75,6 +75,49 @@ allprojects {
             name = 'babbaj-repo'
             url = 'https://babbaj.github.io/maven/'
         }
+        maven {
+            name = 'terraformers-maven'
+            url = 'https://maven.terraformersmc.com/releases/'
+        }
+        maven {
+            name = 'polyfrost-snapshots'
+            url = 'https://repo.polyfrost.org/snapshots'
+        }
+        maven {
+            name = 'polyfrost-releases'
+            url = 'https://repo.polyfrost.org/releases'
+        }
+        maven {
+            name = 'polyfrost-frst'
+            url = 'https://pkg.frst.cloud/releases'
+        }
+        maven {
+            name = 'logix-snapshots'
+            url = 'https://maven.logix.dev/snapshots'
+        }
+        maven {
+            name = 'hypixel-repo'
+            url = 'https://repo.hypixel.net/repository/Hypixel/'
+        }
+        maven {
+            name = 'deftu-releases'
+            url = 'https://maven.deftu.dev/releases'
+        }
+        maven {
+            name = 'jitpack'
+            url = 'https://jitpack.io'
+        }
+        maven {
+            name = 'bawnorton-releases'
+            url = 'https://maven.bawnorton.com/releases'
+            content {
+                includeGroup 'com.github.bawnorton.mixinsquared'
+            }
+        }
+        maven {
+            name = 'devauth-public'
+            url = 'https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1'
+        }
     }
 
     dependencies {

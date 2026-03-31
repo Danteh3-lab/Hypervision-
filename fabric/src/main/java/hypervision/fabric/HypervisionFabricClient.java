@@ -1,7 +1,7 @@
 package hypervision.fabric;
 
 import baritone.api.BaritoneAPI;
-import baritone.utils.gui.HypervisionMenuScreen;
+import baritone.utils.gui.CommandMenuDispatcher;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -21,6 +21,9 @@ public final class HypervisionFabricClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        HypervisionOneConfig.INSTANCE.preload();
+        HypervisionOneConfig.INSTANCE.syncFromBaritone();
+        CommandMenuDispatcher.setOpener(baritone -> HypervisionConfigUi.open());
         KeyBindingHelper.registerKeyBinding(OPEN_MENU);
         ClientTickEvents.END_CLIENT_TICK.register(this::handleTick);
     }
@@ -30,11 +33,7 @@ public final class HypervisionFabricClient implements ClientModInitializer {
             if (client.player == null) {
                 return;
             }
-            if (client.screen instanceof HypervisionMenuScreen) {
-                client.setScreen(null);
-            } else {
-                BaritoneAPI.getProvider().getPrimaryBaritone().openCommandMenu();
-            }
+            BaritoneAPI.getProvider().getPrimaryBaritone().openCommandMenu();
         }
     }
 }

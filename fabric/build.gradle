@@ -33,6 +33,7 @@ unimined.minecraft {
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    shadowLib
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
 }
@@ -45,7 +46,47 @@ dependencies {
         common sourceSet.output
         shadowCommon sourceSet.output
     }
+    def oneconfigFabric = "org.polyfrost.oneconfig:1.21.8-fabric:${project.oneconfig_version}"
+    def oneconfigModules = [
+            "org.polyfrost.oneconfig:commands:${project.oneconfig_version}",
+            "org.polyfrost.oneconfig:config:${project.oneconfig_version}",
+            "org.polyfrost.oneconfig:config-impl:${project.oneconfig_version}",
+            "org.polyfrost.oneconfig:events:${project.oneconfig_version}",
+            "org.polyfrost.oneconfig:hud:${project.oneconfig_version}",
+            "org.polyfrost.oneconfig:internal:${project.oneconfig_version}",
+            "org.polyfrost.oneconfig:ui:${project.oneconfig_version}",
+            "org.polyfrost.oneconfig:utils:${project.oneconfig_version}",
+            "dev.deftu:textile-1.21.8-fabric:1.0.0-beta.17",
+            "dev.deftu:omnicore-1.21.8-fabric:1.0.0-beta.41"
+    ]
+    def oneconfigLibraries = [
+            "com.electronwill.night-config:core:3.6.6",
+            "com.electronwill.night-config:json:3.6.6",
+            "com.electronwill.night-config:toml:3.6.6",
+            "com.electronwill.night-config:yaml:3.6.6",
+            "org.yaml:snakeyaml:1.31",
+            "org.polyfrost:isolated-lwjgl3-loader:0.3.0",
+            "org.polyfrost:polyio:0.1.0",
+            "org.polyfrost:polyui:2.1.7",
+            "dev.deftu:copycat:0.1.3",
+            "dev.deftu:copycat-image-awt:0.1.1",
+            "dev.deftu:copycat-natives-windows-x64:0.1.3",
+            "net.hypixel:mod-api:1.0.1",
+            "net.hypixel:hypixel-data:0.2.0",
+            "org.lwjgl:lwjgl-nanovg:3.3.3"
+    ]
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    modImplementation oneconfigFabric
+    include oneconfigFabric
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+    oneconfigModules.each { dependencyNotation ->
+        implementation dependencyNotation
+        include dependencyNotation
+    }
+    oneconfigLibraries.each { dependencyNotation ->
+        implementation dependencyNotation
+        shadowLib dependencyNotation
+    }
     include "dev.babbaj:nether-pathfinder:${project.nether_pathfinder_version}"
 }
 
@@ -58,7 +99,7 @@ processResources {
 }
 
 shadowJar {
-    configurations = [project.configurations.shadowCommon]
+    configurations = [project.configurations.shadowCommon, project.configurations.shadowLib]
     archiveClassifier.set "dev-shadow"
 }
 

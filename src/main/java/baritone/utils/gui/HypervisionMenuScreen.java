@@ -173,7 +173,7 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
                 synchronizeSelections();
             });
             if (selectedSetting != null && selectedSetting.getValueClass() != Boolean.class) {
-                Rect valueRect = new Rect(detail.x() + 18, detail.bottom() - 92, Math.max(180, detail.width() - 150), FIELD_HEIGHT);
+                Rect valueRect = new Rect(detail.x() + 18, detail.y() + 154, Math.max(180, detail.width() - 150), FIELD_HEIGHT);
                 settingsValueField = addField(valueRect, settingsDraftValue, value -> settingsDraftValue = value);
             }
             return;
@@ -415,17 +415,17 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
         detailY = drawWrappedText(guiGraphics, safeDefaultValue(selectedSetting), detail.x() + 18, detailY + 26, detail.width() - 36, COLOR_TEXT_MUTED, 3);
 
         if (selectedSetting.getValueClass() == Boolean.class) {
-            Rect toggleRect = new Rect(detail.x() + 18, detail.bottom() - 92, 150, BUTTON_HEIGHT);
+            Rect toggleRect = new Rect(detail.x() + 18, detail.y() + 150, 150, BUTTON_HEIGHT);
             drawButton(guiGraphics, toggleRect, Boolean.TRUE.equals(selectedSetting.value) ? "Disable" : "Enable", isInside(mouseX, mouseY, toggleRect), Boolean.TRUE.equals(selectedSetting.value));
         } else {
-            Rect valueRect = new Rect(detail.x() + 18, detail.bottom() - 92, Math.max(180, detail.width() - 150), FIELD_HEIGHT);
-            Rect applyRect = new Rect(valueRect.right() + 10, detail.bottom() - 96, 104, BUTTON_HEIGHT);
+            Rect valueRect = new Rect(detail.x() + 18, detail.y() + 154, Math.max(180, detail.width() - 150), FIELD_HEIGHT);
+            Rect applyRect = new Rect(valueRect.right() + 10, detail.y() + 150, 104, BUTTON_HEIGHT);
             guiGraphics.drawString(font, "Edit value", detail.x() + 18, valueRect.y() - 18, COLOR_TEXT_SOFT);
             drawFieldBackplate(guiGraphics, valueRect);
             drawButton(guiGraphics, applyRect, "Apply", isInside(mouseX, mouseY, applyRect), false);
         }
 
-        Rect resetRect = new Rect(detail.x() + 18, detail.bottom() - 52, 150, BUTTON_HEIGHT);
+        Rect resetRect = new Rect(detail.x() + 18, detail.y() + 188, 150, BUTTON_HEIGHT);
         drawButton(guiGraphics, resetRect, "Reset setting", isInside(mouseX, mouseY, resetRect), false);
     }
 
@@ -680,6 +680,15 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        Layout layout = layout();
+        if (button == 0) {
+            if (section == Section.SETTINGS && isInside(mouseX, mouseY, settingsListBodyRect(layout)) && handleSettingsClick(layout, mouseX, mouseY)) {
+                return true;
+            }
+            if (section == Section.CONSOLE && isInside(mouseX, mouseY, consoleListBodyRect(layout)) && handleConsoleClick(layout, mouseX, mouseY)) {
+                return true;
+            }
+        }
         if (super.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }
@@ -687,7 +696,6 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
             return false;
         }
 
-        Layout layout = layout();
         if (handleSidebarClick(layout, mouseX, mouseY)) {
             return true;
         }
@@ -932,7 +940,12 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
             }
             Rect row = new Rect(listBody.x(), listBody.y() + index * LIST_ROW_HEIGHT, listBody.width(), 20);
             if (isInside(mouseX, mouseY, row)) {
-                selectSetting(filtered.get(settingIndex));
+                Settings.Setting<?> clickedSetting = filtered.get(settingIndex);
+                if (clickedSetting.getValueClass() == Boolean.class && Objects.equals(clickedSetting, selectedSetting)) {
+                    toggleSelectedSetting();
+                    return true;
+                }
+                selectSetting(clickedSetting);
                 rebuildWidgets();
                 return true;
             }
@@ -944,21 +957,21 @@ public final class HypervisionMenuScreen extends Screen implements Helper {
 
         Rect detail = settingsDetailRect(layout);
         if (selectedSetting.getValueClass() == Boolean.class) {
-            Rect toggleRect = new Rect(detail.x() + 18, detail.bottom() - 92, 150, BUTTON_HEIGHT);
+            Rect toggleRect = new Rect(detail.x() + 18, detail.y() + 150, 150, BUTTON_HEIGHT);
             if (isInside(mouseX, mouseY, toggleRect)) {
                 toggleSelectedSetting();
                 return true;
             }
         } else {
-            Rect valueRect = new Rect(detail.x() + 18, detail.bottom() - 92, Math.max(180, detail.width() - 150), FIELD_HEIGHT);
-            Rect applyRect = new Rect(valueRect.right() + 10, detail.bottom() - 96, 104, BUTTON_HEIGHT);
+            Rect valueRect = new Rect(detail.x() + 18, detail.y() + 154, Math.max(180, detail.width() - 150), FIELD_HEIGHT);
+            Rect applyRect = new Rect(valueRect.right() + 10, detail.y() + 150, 104, BUTTON_HEIGHT);
             if (isInside(mouseX, mouseY, applyRect)) {
                 applySelectedSetting();
                 return true;
             }
         }
 
-        Rect resetRect = new Rect(detail.x() + 18, detail.bottom() - 52, 150, BUTTON_HEIGHT);
+        Rect resetRect = new Rect(detail.x() + 18, detail.y() + 188, 150, BUTTON_HEIGHT);
         if (isInside(mouseX, mouseY, resetRect)) {
             resetSelectedSetting();
             return true;

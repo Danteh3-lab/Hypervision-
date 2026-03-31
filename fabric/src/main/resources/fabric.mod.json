@@ -20,6 +20,9 @@
   "entrypoints": {
     "client": [
       "hypervision.fabric.HypervisionFabricClient"
+    ],
+    "modmenu": [
+      "hypervision.fabric.HypervisionModMenuApi"
     ]
   },
   "mixins": [
@@ -28,6 +31,7 @@
   "depends": {
     "fabricloader": ">=0.16.14",
     "fabric-api": "*",
+    "oneconfigv1": "*",
     "minecraft": ["1.21.6", "1.21.7", "1.21.8"]
   },
   "custom": {
