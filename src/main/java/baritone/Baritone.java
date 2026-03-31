@@ -35,6 +35,7 @@ import baritone.utils.BlockStateInterface;
 import baritone.utils.GuiClick;
 import baritone.utils.InputOverrideHandler;
 import baritone.utils.PathingControlManager;
+import baritone.utils.gui.HypervisionMenuScreen;
 import baritone.utils.player.BaritonePlayerContext;
 import net.minecraft.client.Minecraft;
 
@@ -248,6 +249,11 @@ public class Baritone implements IBaritone {
                 mc.execute(() -> mc.setScreen(new GuiClick()));
             } catch (Exception ignored) {}
         }).start();
+    }
+
+    @Override
+    public void openCommandMenu() {
+        mc.execute(() -> mc.setScreen(new HypervisionMenuScreen(this)));
     }
 
     public Path getDirectory() {

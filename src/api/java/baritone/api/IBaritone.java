@@ -143,4 +143,9 @@ public interface IBaritone {
      * Open click
      */
     void openClick();
+
+    /**
+     * Open the custom Hypervision control overlay.
+     */
+    void openCommandMenu();
 }

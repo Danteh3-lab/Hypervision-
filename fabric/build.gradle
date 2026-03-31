@@ -45,6 +45,7 @@ dependencies {
         common sourceSet.output
         shadowCommon sourceSet.output
     }
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     include "dev.babbaj:nether-pathfinder:${project.nether_pathfinder_version}"
 }
 
